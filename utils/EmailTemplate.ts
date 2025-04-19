@@ -6,6 +6,7 @@ export interface EmailValuesI {
 	message: string;
 }
 
+//Template
 export const emailTemplate = (values: EmailValuesI) => {
 	const { name, phone, email, message } = values;
 
