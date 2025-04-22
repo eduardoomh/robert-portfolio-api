@@ -40,7 +40,7 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    // Validar hCaptcha
+    // Validar hCaptcha que lleg en el front
     const verifyResponse = await fetch('https://api.hcaptcha.com/siteverify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
