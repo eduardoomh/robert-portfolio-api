@@ -28,14 +28,48 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     const data = await request.json();
+    const { captcha_token, ...formValues } = data;
 
+    if (!captcha_token) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Captcha token is missing.'
+      }), {
+        status: 400,
+        headers: getCorsHeaders(origin)
+      });
+    }
+
+    // Validar hCaptcha
+    const verifyResponse = await fetch('https://api.hcaptcha.com/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        secret: import.meta.env.HCAPTCHA_SECRET_KEY,
+        response: captcha_token
+      })
+    });
+
+    const verifyResult = await verifyResponse.json();
+
+    if (!verifyResult.success) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Captcha verification failed.'
+      }), {
+        status: 403,
+        headers: getCorsHeaders(origin)
+      });
+    }
+
+    // Enviar email
     const resend = new Resend(import.meta.env.RESEND_API_KEY);
 
     const response = await resend.emails.send({
       from: 'portfolio@robertriera.com',
       to: import.meta.env.ADMIN_EMAIL,
       subject: 'Robert Riera - Portfolio form',
-      html: emailTemplate(data)
+      html: emailTemplate(formValues)
     });
 
     return new Response(JSON.stringify({
