@@ -23,15 +23,10 @@ export const GET: APIRoute = async () => {
         id: post.id,
         date: post.date,
         slug: post.slug,
-        status: post.status,
         title: post.yoast_head_json.title,
-        description: post.yoast_head_json.description,
-        content: post.content.rendered,
         excerpt: post.excerpt.rendered,
         author: post.yoast_head_json.author,
         thumbnail: post.yoast_head_json.schema['@graph'][0].thumbnailUrl,
-        keywords: post.yoast_head_json.schema['@graph'][0].keywords,
-
     }))
 
     return new Response(JSON.stringify(formattedPosts), {
